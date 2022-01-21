@@ -30,8 +30,35 @@ class Deck:
 
     def draw_card(self):
         if len(self.cards) == 0:
-            raise Exception("You cannot draw card. Deck is empty.")
+            raise Exception("Deck is empty.")
         return self.cards.pop()
+
+    def draw_cards(self, n):
+        if n > len(self.cards):
+            raise Exception(
+                "You can draw less than the number of cards in the deck.")
+        return [self.draw_card() for _ in range(n)]
+
+
+class Line:
+    def __init__(self):
+        self.formations = (Formation(), Formation())
+        self.flag = None
+
+    def add(self, turn, card):
+        f = self.formations[turn % 2]
+        f.add(card)
+
+    def attempt(self, turn):
+        f1 = self.formations[turn % 2]
+        f2 = self.formations[(turn + 1) % 2]
+        return f1 > f2
+
+    def draw(self):
+        pass
+
+    def __repr__(self):
+        return " ".join([self.formations[i].__repr__() for i in range(2)])[1:]
 
 
 class Formation:
@@ -48,7 +75,7 @@ class Formation:
     def add(self, card):
         if len(self.cards) == 3:
             raise Exception(
-                "You can't add card. The number of card is limited to a maximum of 3.")
+                "The number of card is limited to a maximum of 3.")
         else:
             self.cards.append(card)
             self.colors.append(card.color)
@@ -93,8 +120,28 @@ class Formation:
         else:
             return self.FORMATION_POWER[self.formation] > f2.FORMATION_POWER[f2.formation]
 
+    def __repr__(self):
+        return " ".join(self.cards)[1:]
+
 
 class Player:
     def __init__(self, name):
-        self.card = None
+        self.cards = None
         self.name = name
+
+
+class Game:
+    def __init__(self):
+        name1 = input("p1 name ")
+        name2 = input("p2 name")
+        self.deck = Deck()
+        self.p1 = Player(name1)
+        self.p2 = Player(name2)
+
+    def wins(self, winner):
+        w = "{} wins the round"
+        w = w.format(winner)
+        print(w)
+
+    def draw(self):
+        print("draw")
