@@ -13,12 +13,12 @@ class Card:
     def __gt__(self, c2):
         return self.number > c2.number
 
-    def __repr__(self):
+    def __str__(self):
         return self.color + f"{self.number:02}"
 
 
 class Deck:
-    COLORS = ["red", "blue", "green", "yellow", "purplue", "orange"]
+    COLORS = ["R", "B", "G", "Y", "P", "O"]
     NUMBERS = [i for i in range(11)]
 
     def __init__(self):
@@ -57,8 +57,9 @@ class Line:
     def draw(self):
         pass
 
-    def __repr__(self):
-        return " ".join([self.formations[i].__repr__() for i in range(2)])[1:]
+    def __str__(self):
+        f1, f2 = self.formations[:]
+        return str(f1) + " F " + str(f2)
 
 
 class Formation:
@@ -120,23 +121,36 @@ class Formation:
         else:
             return self.FORMATION_POWER[self.formation] > f2.FORMATION_POWER[f2.formation]
 
-    def __repr__(self):
-        return " ".join(self.cards)[1:]
+    def __str__(self):
+        return " ".join([str(card) for card in self.cards])
 
 
 class Player:
     def __init__(self, name):
-        self.cards = None
         self.name = name
+        self.cards = []
+
+    def add_card(self, card):
+        self.cards.append(card)
+        # TODO: cardを色と番号でソートする
+
+    def play_card(self, card_str):
+        for i, card in enumerate(self.cards):
+            if str(card) == card_str:
+                return self.cards.pop(i)
+        raise Exception(f"Not found {card_str}. {self.__str__()}")
+
+    def __str__(self):
+        return f"name: {self.name} " + " ".join([str(card) for card in self.cards])
 
 
 class Game:
     def __init__(self):
-        name1 = input("p1 name ")
-        name2 = input("p2 name")
+        name1 = input("p1 name: ")
+        name2 = input("p2 name: ")
         self.deck = Deck()
-        self.p1 = Player(name1)
-        self.p2 = Player(name2)
+        self.line = Line()
+        self.players = [Player(name1), Player(name2)]
 
     def wins(self, winner):
         w = "{} wins the round"
@@ -145,3 +159,40 @@ class Game:
 
     def draw(self):
         print("draw")
+
+    def play_game(self):
+        for p in self.players:
+            p.cards = self.deck.draw_cards(7)
+
+        turn = 0
+        while(1):
+            p = self.players[turn % 2]
+
+            # print Line
+            print(self.line)
+
+            # print players cards
+            print(p)
+
+            # submit a card
+            card_str = input("Submit a card. ex) R01\n")
+            # TODO: 誤ったカードを選択した際にもう一度選択させる
+            card = p.play_card(card_str)
+            self.line.add(turn, card)
+
+            # attempt
+            # TODO:変数名整理
+            attempt = input("Do you think you can win? [y/n]\n")
+            if attempt == "y":
+                if self.line.attempt(turn):
+                    self.wins(p)
+
+            # draw a card
+            p.add_card(self.deck.draw_card())
+
+            turn += 1
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.play_game()
