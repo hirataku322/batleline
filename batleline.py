@@ -19,7 +19,7 @@ class Card:
 
 class Deck:
     COLORS = ["R", "B", "G", "Y", "P", "O"]
-    NUMBERS = [i for i in range(11)]
+    NUMBERS = [i for i in range(1, 11)]
 
     def __init__(self):
         self.cards = []
