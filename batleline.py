@@ -18,7 +18,7 @@ class Card:
 
 
 class Deck:
-    COLORS = ["R", "B", "G", "Y", "P", "O"]
+    COLORS = ['B', 'G', 'O', 'P', 'R', 'Y']
     NUMBERS = [i for i in range(1, 11)]
 
     def __init__(self):
@@ -132,7 +132,11 @@ class Player:
 
     def add_card(self, card):
         self.cards.append(card)
-        # TODO: cardを色と番号でソートする
+        self.cards.sort(key=lambda card: card.number)
+
+    def add_cards(self, cards):
+        for card in cards:
+            self.add_card(card)
 
     def play_card(self, card_str):
         for i, card in enumerate(self.cards):
@@ -162,7 +166,8 @@ class Game:
 
     def play_game(self):
         for p in self.players:
-            p.cards = self.deck.draw_cards(7)
+            initial_cards = self.deck.draw_cards(7)
+            p.add_cards(initial_cards)
 
         turn = 0
         while(1):
