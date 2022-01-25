@@ -145,7 +145,7 @@ class Player:
         raise Exception(f"Not found {card_str}. {self.__str__()}")
 
     def __str__(self):
-        return f"name: {self.name} " + " ".join([str(card) for card in self.cards])
+        return f"name: {self.name}\n" + "cards: " + " ".join([str(card) for card in self.cards])
 
 
 class Game:
@@ -157,9 +157,7 @@ class Game:
         self.players = [Player(name1), Player(name2)]
 
     def wins(self, winner):
-        w = "{} wins the round"
-        w = w.format(winner)
-        print(w)
+        print(f"{winner.name} wins the round!")
 
     def draw(self):
         print("draw")
@@ -180,7 +178,7 @@ class Game:
             print(p)
 
             # submit a card
-            card_str = input("Submit a card. ex) R01\n")
+            card_str = input("choise -> ")
             # TODO: 誤ったカードを選択した際にもう一度選択させる
             card = p.play_card(card_str)
             self.line.add(turn, card)
@@ -196,6 +194,7 @@ class Game:
             p.add_card(self.deck.draw_card())
 
             turn += 1
+            print()
 
 
 if __name__ == "__main__":
