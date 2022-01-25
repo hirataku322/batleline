@@ -170,6 +170,7 @@ class Game:
         turn = 0
         while(1):
             p = self.players[turn % 2]
+            o = self.players[(turn + 1) % 2]
 
             # print Line
             print(self.line)
@@ -183,16 +184,16 @@ class Game:
             card = p.play_card(card_str)
             self.line.add(turn, card)
 
-            # attempt
-            # TODO:変数名整理
-            attempt = input("Do you think you can win? [y/n]\n")
-            if attempt == "y":
-                if self.line.attempt(turn):
-                    self.wins(p)
-
             # draw a card
             p.add_card(self.deck.draw_card())
 
+            # end game
+            if turn == 5:
+                winner = p if self.line.attempt(turn) else o
+                self.wins(winner)
+                break
+
+            # update
             turn += 1
             print()
 
